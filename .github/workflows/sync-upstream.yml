@@ -1,0 +1,24 @@
+name: Sync IceTV upstream
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: icetv-upstream-sync
+
+jobs:
+  sync:
+    if: github.repository == 'hahaen/IceTV' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - name: Sync main with naseaoi/IceTV
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh api --method POST "repos/${GITHUB_REPOSITORY}/merge-upstream" --raw-field branch=main
